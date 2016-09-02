@@ -3,6 +3,7 @@ var bodyParser = require('body-parser');
 var morgan = require('morgan');
 var config = require('./config.js');
 var mongoose = require('mongoose');
+var api = require('./app/routes/api.js')(app, express);
 
 var app =  express();
 
@@ -18,6 +19,8 @@ mongoose.connect(config.database, function(err){
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(morgan('dev'));
+
+app.use('/api',api);
 
 app.get('*', function(req, res){
     res.sendFile(__dirname + '/public/views/index.html');
