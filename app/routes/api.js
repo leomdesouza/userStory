@@ -10,7 +10,7 @@ function createToken(user){
         name: user.name,
         username: user.username
     }, secretKey, {
-        expirtesInMinute: 1440
+        expiresIn: '24h'
     });
 
     return token;
@@ -56,17 +56,18 @@ module.exports = function(app, express){
     api.post('/login', function(req, res){
         User.findOne({ 
             username: req.body.username
-         }).select('password').exec(function(err, user){
+         }, 'password', function(err, user){
+             
              if(err) throw err;
 
              if(!user){
-                 res.sender({ message: "User doenst exist" });
+                 res.json({ message: "User doenst exist" });
              }
              else if(user){
                  var validPassword = user.comparePassword(req.body.password);
 
                  if(!validPassword){
-                     res.sender({ message: "Invalid Password" });
+                     res.json({ message: "Invalid Password" });
                  }
                  else{
                      var token = createToken(user);
@@ -77,7 +78,7 @@ module.exports = function(app, express){
                      });
                  }
              }
-         });
+         });  
     });
 
 

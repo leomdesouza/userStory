@@ -15,6 +15,8 @@ mongoose.connect(config.database, function(err){
         console.log('connected to the database');
     }
 });
+mongoose.Promise = global.Promise;
+
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
