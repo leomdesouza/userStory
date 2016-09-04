@@ -4,6 +4,8 @@ var jsonwebtoken = require('jsonwebtoken');
 
 var secretKey = config.secretKey;
 
+//Need to create a function to validate token in api's
+
 function createToken(user){
     var token = jsonwebtoken.sign({
         _id: user._id,
