@@ -42,15 +42,26 @@ module.exports = function(app, express){
 
     api.get('/users',function(req,res){
 
-        User.find({}, function(err, users){
-            if(err){
-                res.send(err);
-                return;
-            }
+        var token = req.headers['token'];
 
-            res.json(users);
-
-        });
+        if(token){
+            jsonwebtoken.verify(token, secretKey, function(err, decoded){
+                if(!err){
+                    User.find({}, function(err, users){
+                        if(err){
+                            res.send(err);
+                            return;
+                        }
+                        req.decoded = decoded;
+                        res.json(users);
+                    });
+                } else {
+                    res.json({ success: false, message: 'Authentication failed' });
+                }
+            }); 
+        } else {
+            res.json({ message: 'No token privided' });
+        }    
     });
 
     api.post('/login', function(req, res){
