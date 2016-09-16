@@ -7,7 +7,7 @@ var api = require('./app/routes/api.js')(app, express);
 
 var app =  express();
 
-mongoose.connect(config.database, function(err){
+mongoose.connect(config.mongolab, function(err){
     if(err){
         console.log(err);
     }
@@ -28,11 +28,11 @@ app.get('*', function(req, res){
     res.sendFile(__dirname + '/public/views/index.html');
 });
 
-app.listen(3000, function(err){
+app.listen(config.port, function(err){
     if(err){
         console.log(err);
     }
     else {
-        console.log("Listening on port 3000");
+        console.log("Listening on port" + config.port);
     }
 });
