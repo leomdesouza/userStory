@@ -1,3 +1,5 @@
+'use strict';
+
 var User = require('../models/user');
 var config = require('../../config.js');
 var jsonwebtoken = require('jsonwebtoken');
@@ -91,7 +93,7 @@ module.exports = function(app, express){
 
         // Check if token exist
         if(token){
-            jsonwebtoken.verify(token, secretKey, function(err, docoded){
+            jsonwebtoken.verify(token, secretKey, function(err, decoded){
                 if(err){
                     res.status(403).send({ sucess: false, message: "Failed to authenticate user" });
                 }
@@ -104,6 +106,10 @@ module.exports = function(app, express){
         else{
             res.status(403).send({ success: false, message: "No token provided" });
         }
+    });
+
+    api.get('/', function(req, res){
+        res.json("Hello world!");
     });
 
     return api;
