@@ -1,16 +1,15 @@
 'use strict';
 
-var User = require('../models/user');
+var User = require('../models/user.js');
+var Story = require('../models/story.js')
 var config = require('../../config.js');
 var jsonwebtoken = require('jsonwebtoken');
 
 var secretKey = config.secretKey;
 
-//Need to create a function to validate token in api's
-
 function createToken(user){
     var token = jsonwebtoken.sign({
-        _id: user._id,
+        id: user._id,
         name: user.name,
         username: user.username
     }, secretKey, {
@@ -108,9 +107,35 @@ module.exports = function(app, express){
         }
     });
 
-    api.get('/', function(req, res){
-        res.json("Hello world!");
-    });
+    api.route('/')
+        .post(function(req, res){
+
+            var story = new Story({
+                creator: req.decoded.id,
+                content: req.body.content
+            });
+            story.save(function(err){
+                if(err){
+                    res.send(err);
+                    return;
+                }
+                else{
+                    res.json({ message: "New Story Created!" });
+                }
+            });
+        })
+        .get(function(req, res){
+
+            Story.find({ creator: req.decoded.id }, function(err, stories){
+                if(err){
+                    res.send(err);
+                    return;
+                }
+                else{
+                    res.json(stories);
+                }
+            });
+        }); 
 
     return api;
 
