@@ -44,26 +44,15 @@ module.exports = function(app, express){
 
     api.get('/users',function(req,res){
 
-        var token = req.headers['token'];
-
-        if(token){
-            jsonwebtoken.verify(token, secretKey, function(err, decoded){
-                if(!err){
-                    User.find({}, function(err, users){
-                        if(err){
-                            res.send(err);
-                            return;
-                        }
-                        req.decoded = decoded;
-                        res.json(users);
-                    });
-                } else {
-                    res.json({ success: false, message: 'Authentication failed' });
-                }
-            }); 
-        } else {
-            res.json({ message: 'No token privided' });
-        }    
+        User.find({}, function(err, users){
+            if(err){
+                res.send(err);
+                return;
+            }
+            else{
+                res.json(users);
+            }
+        });
     });
 
     api.post('/login', function(req, res){
@@ -94,6 +83,28 @@ module.exports = function(app, express){
          });  
     });
 
+    api.use(function(req, res, next){
+
+        console.log("Somebody just came to our app!");
+
+        var token = req.body.token || req.param('token') || req.headers['x-access-token'];
+
+        // Check if token exist
+        if(token){
+            jsonwebtoken.verify(token, secretKey, function(err, docoded){
+                if(err){
+                    res.status(403).send({ sucess: false, message: "Failed to authenticate user" });
+                }
+                else{
+                    req.decoded = decoded;
+                    next();
+                }
+            });
+        }
+        else{
+            res.status(403).send({ success: false, message: "No token provided" });
+        }
+    });
 
     return api;
 
