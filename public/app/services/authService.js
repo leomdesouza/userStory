@@ -41,7 +41,6 @@ angular.module('authService', [])
             else{
                 return $q.reject({ message: "User has no token" });
             }
-
         };
 
         return authFactory;
@@ -91,5 +90,7 @@ angular.module('authService', [])
             return $q.reject(response);
 
         };
+
+        return interceptorFactory;
 
     });
